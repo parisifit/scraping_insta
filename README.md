@@ -38,6 +38,17 @@ Para "seguindo", repita os passos clicando em **seguindo** e rode:
 python ler_pagina_salva.py seguindo.html --tipo seguindo --perfil fulana
 ```
 
+## Quem está nas duas listas
+
+Depois de gerar `seguidores` e `seguindo` do mesmo perfil, rode:
+
+```bash
+python cruzar_listas.py fulana
+```
+
+Ele mostra quem segue o perfil **e** é seguido por ele, com nome e foto, e grava `mutuos.csv`,
+`mutuos.json` e a galeria `mutuos.html` na mesma pasta `saida/fulana/`.
+
 ## O que sai
 
 Em `saida/<perfil>/`:
@@ -47,6 +58,7 @@ Em `saida/<perfil>/`:
 | `seguidores.csv` / `seguindo.csv` | usuário, nome, arquivo da foto, link da foto. Separado por `;`, abre direto no Excel |
 | `seguidores.json` / `seguindo.json` | os mesmos dados em JSON |
 | `seguidores.html` / `seguindo.html` | galeria com foto, @ e nome. Clique para abrir o perfil |
+| `mutuos.csv` / `.json` / `.html` | quem está nas duas listas (gerado pelo `cruzar_listas.py`) |
 | `fotos/<usuario>.jpg` | foto de perfil de cada pessoa |
 
 As fotos são copiadas da pasta `_files` que o navegador salvou. Se alguma não estiver lá, o script

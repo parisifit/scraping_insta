@@ -132,7 +132,7 @@ def guardar_foto(src: str, pagina: Path, destino: Path) -> str:
     return ""
 
 
-def salvar(pessoas: list[Pessoa], pasta: Path, tipo: str, perfil: str) -> None:
+def salvar(pessoas: list[Pessoa], pasta: Path, tipo: str, perfil: str, titulo: str = "") -> None:
     campos = list(Pessoa.__dataclass_fields__)
     # ";" e utf-8 com BOM para o Excel em português abrir em colunas e com acentos.
     with open(pasta / f"{tipo}.csv", "w", newline="", encoding="utf-8-sig") as f:
@@ -142,7 +142,7 @@ def salvar(pessoas: list[Pessoa], pasta: Path, tipo: str, perfil: str) -> None:
     (pasta / f"{tipo}.json").write_text(
         json.dumps([asdict(p) for p in pessoas], ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    titulo = f"{tipo.capitalize()}" + (f" de @{perfil}" if perfil else "")
+    titulo = titulo or f"{tipo.capitalize()}" + (f" de @{perfil}" if perfil else "")
     cartoes = "\n".join(
         f'<a class="c" href="{BASE}/{html.escape(p.usuario)}/" target="_blank">'
         f'<img src="{html.escape(p.foto_arquivo or p.foto_url)}" alt="" loading="lazy">'
