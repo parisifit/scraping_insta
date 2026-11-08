@@ -1,13 +1,14 @@
 # Listar seguidores do Instagram
 
-Script em Python + Selenium que abre o Chrome com **a sua conta** logada e lista os seguidores
-e/ou quem um perfil segue. Para cada pessoa: **nome de usuário, nome e foto de perfil**.
+Gera a lista de seguidores (ou de quem a pessoa segue) de um perfil do Instagram com
+**nome de usuário, nome e foto de perfil**, a partir de uma página que **você** salva no navegador.
 
-Nada é publicado: as listas e o login ficam só no seu computador.
+O script não entra no Instagram nem automatiza nada no site: ele só lê o arquivo salvo no seu
+computador. Por isso não tem captcha nem risco de bloquear a sua conta.
 
 ## Instalar (uma vez)
 
-Precisa de Python 3.10+ e do Google Chrome instalados.
+Precisa de Python 3.10+.
 
 ```bash
 git clone https://github.com/parisifit/scraping_insta.git
@@ -17,19 +18,25 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-O Selenium baixa sozinho o chromedriver compatível com o seu Chrome.
-
 ## Usar
 
+1. No computador, abra o Instagram no seu navegador de sempre (Chrome, Edge, Firefox) e entre no perfil da pessoa.
+2. Clique em **seguidores**. Na janela que abre, role a lista até o fim, até parar de carregar gente nova.
+   (Com menos de mil pessoas, leva poucos minutos.)
+3. Com a janela ainda aberta, salve a página: **Ctrl+S** (Mac: Cmd+S) → tipo **"Página da Web, completa"**.
+   Salve na pasta do projeto, por exemplo como `seguidores.html`. O navegador cria junto uma pasta
+   `seguidores_files` com as fotos: deixe-a ao lado do arquivo.
+4. Rode:
+
 ```bash
-python listar_seguidores.py nome_do_perfil                    # seguidores e seguindo
-python listar_seguidores.py nome_do_perfil --tipo seguidores  # só seguidores
-python listar_seguidores.py nome_do_perfil --sem-fotos        # não baixa as fotos
+python ler_pagina_salva.py seguidores.html --perfil fulana
 ```
 
-Na primeira vez, o Chrome abre na tela de login do Instagram: entre com a sua conta **no navegador**
-(a senha nunca passa pelo script) e aperte Enter no terminal. O login fica guardado em
-`.chrome-instagram/`, então das próximas vezes ele entra direto.
+Para "seguindo", repita os passos clicando em **seguindo** e rode:
+
+```bash
+python ler_pagina_salva.py seguindo.html --tipo seguindo --perfil fulana
+```
 
 ## O que sai
 
@@ -37,30 +44,22 @@ Em `saida/<perfil>/`:
 
 | Arquivo | Conteúdo |
 | --- | --- |
-| `seguidores.csv`, `seguindo.csv` | usuário, nome, link da foto, arquivo da foto, privado, verificado, id. Separado por `;`, abre direto no Excel |
-| `seguidores.json`, `seguindo.json` | os mesmos dados em JSON |
-| `seguidores.html`, `seguindo.html` | galeria com foto, @ e nome. Clique para abrir o perfil |
+| `seguidores.csv` / `seguindo.csv` | usuário, nome, arquivo da foto, link da foto. Separado por `;`, abre direto no Excel |
+| `seguidores.json` / `seguindo.json` | os mesmos dados em JSON |
+| `seguidores.html` / `seguindo.html` | galeria com foto, @ e nome. Clique para abrir o perfil |
 | `fotos/<usuario>.jpg` | foto de perfil de cada pessoa |
 
-Os links de foto do Instagram expiram depois de alguns dias; os `.jpg` baixados ficam.
+As fotos são copiadas da pasta `_files` que o navegador salvou. Se alguma não estiver lá, o script
+tenta baixá-la pelo link da página.
 
-## Como funciona
+## Se algo der errado
 
-1. Lê os dados do perfil (id, se é privado, total de seguidores/seguindo).
-2. **Modo padrão:** pede a lista aos mesmos endereços que o site do Instagram usa quando você clica em
-   "seguidores", de dentro do navegador logado, 25 pessoas por vez, com pausa de 2,5 a 5,5 s entre as páginas.
-3. **Se isso falhar** (o Instagram muda essas chamadas de vez em quando), ele abre a janela de seguidores
-   e rola a lista na tela até ela parar de crescer. Para forçar um modo: `--modo api` ou `--modo tela`.
+- **"Não achei a janela de seguidores"**: a página foi salva com a lista fechada. Abra a lista de novo, role e salve.
+- **Faltou gente**: a lista não foi rolada até o fim antes de salvar. Compare o número lido com o total do perfil.
+- **Perfil privado**: o Instagram só mostra a lista se você seguir a pessoa.
+- **Leu 0 pessoas ou nomes estranhos**: o Instagram mudou o layout. Abra uma issue com a mensagem do terminal.
 
-Com menos de mil seguidores, cada lista leva cerca de 2 a 4 minutos.
+## Privacidade
 
-## Cuidados
-
-- **Perfil privado:** só funciona se você seguir a pessoa (o perfil te seguir não basta).
-- **Bloqueio:** se o Instagram pedir para "esperar alguns minutos", o script para e salva o que já pegou.
-  Espere algumas horas antes de tentar de novo. Não rode várias vezes seguidas nem para muitos perfis no mesmo dia.
-- **Lista menor que o total:** o Instagram às vezes não entrega todo mundo (contas desativadas, restritas etc.).
-  O script avisa quando o número coletado fica abaixo do total do perfil.
-- **Privacidade:** a lista é dado pessoal de terceiros (LGPD). Guarde só para consulta e não versione
-  `saida/` nem `.chrome-instagram/`: o `.gitignore` desta pasta já impede isso.
-  Coleta automatizada também vai contra os Termos de Uso do Instagram; use com moderação.
+As listas são dados pessoais de terceiros (LGPD): guarde só para consulta. O `.gitignore` impede
+que `saida/` e as páginas salvas sejam enviadas para o GitHub.

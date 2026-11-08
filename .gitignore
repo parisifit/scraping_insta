@@ -1,5 +1,6 @@
-# login do Chrome (cookies da sua conta) e listas baixadas: nunca versionar
-.chrome-instagram/
+# listas geradas e páginas salvas (dados pessoais de terceiros): nunca versionar
 saida/
+*.html
+*_files/
 __pycache__/
 .venv/
