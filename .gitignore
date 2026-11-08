@@ -1,0 +1,5 @@
+# login do Chrome (cookies da sua conta) e listas baixadas: nunca versionar
+.chrome-instagram/
+saida/
+__pycache__/
+.venv/
